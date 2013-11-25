@@ -1,6 +1,8 @@
 Le Guide Définitif de Yii
 =========================
 
+Ce tutoriel est publié sous [les Conditions de la Documentation Yii (en)](http://www.yiiframework.com/doc/terms/).
+
 Tous droits réservés.
 
 2008-2013 &copy; Yii Software LLC.
