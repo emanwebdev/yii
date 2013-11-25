@@ -1,0 +1,88 @@
+par un pointConfigurations pour Apache et Nginx 
+===================================
+
+Apache
+------
+
+Yii est prêt à fonctionner avec une configuration par défaut pour les serveurs Web Apache. 
+Les fichiers `.htaccess` dans les répertoires du framework Yii et dans ceux de l'application permettent 
+de restreindre l'accès aux ressources sensibles. Pour cacher le fichier d'amorçage (généralement `index.php`) 
+dans vos URL, vous pouvez ajouter des instructions pour `mod_rewrite` dans le fichier `.htaccess` à la racine du site 
+ou dans le fichier de configuration de l'hôte virtuel.
+
+~~~
+RewriteEngine on
+
+# empêche httpd de servir des fichiers qui commencent par un point (.htaccess, .svn, .git, etc.)
+RedirectMatch 403 /\..*$
+# si un répertoire ou un fichier existe, l'utiliser directement
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# sinon, rediriger vers index.php
+RewriteRule . index.php
+~~~
+
+
+Nginx
+-----
+
+Vous pouvez utiliser Yii avec [Nginx](http://wiki.nginx.org/) et PHP avec [FPM SAPI](http://php.net/install.fpm).
+Voici un exemple de configuration d'hôte. Il définit le fichier d'amorçage et dit à Yii de traiter toutes les 
+demandes de fichiers inexistants, ce qui nous permet d'avoir de jolies URL.
+
+~~~
+server {
+    set $host_path "/www/mysite";
+    access_log  /www/mysite/log/access.log  main;
+
+    server_name  mysite;
+    root   $host_path/htdocs;
+    set $yii_bootstrap "index.php";
+
+    charset utf-8;
+
+    location / {
+        index  index.html $yii_bootstrap;
+        try_files $uri $uri/ /$yii_bootstrap?$args;
+    }
+
+    location ~ ^/(protected|framework|themes/\w+/views) {
+        deny  all;
+    }
+
+    # éviter le traitement par Yii des appels aux fichiers statiques inexistants
+    location ~ \.(js|css|png|jpg|gif|swf|ico|pdf|mov|fla|zip|rar)$ {
+        try_files $uri =404;
+    }
+
+    # passer les scripts PHP au serveur FastCGI qui écoute sur 127.0.0.1:9000
+    #
+    location ~ \.php {
+        fastcgi_split_path_info  ^(.+\.php)(.*)$;
+
+        #let yii catch the calls to unexising PHP files
+        set $fsn /$yii_bootstrap;
+        if (-f $document_root$fastcgi_script_name){
+            set $fsn $fastcgi_script_name;
+        }
+
+        fastcgi_pass   127.0.0.1:9000;
+        include fastcgi_params;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fsn;
+
+        #PATH_INFO and PATH_TRANSLATED can be omitted, but RFC 3875 specifies them for CGI
+        fastcgi_param  PATH_INFO        $fastcgi_path_info;
+        fastcgi_param  PATH_TRANSLATED  $document_root$fsn;
+    }
+
+    # empêcher nginx de servir les fichiers commentant par un point (.htaccess, .svn, .git, etc.)
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+}
+~~~
+Using this configuration you can set `cgi.fix_pathinfo=0` in php.ini to avoid many unnecessary system stat() calls.
+
+<div class="revision">$Id$</div>
