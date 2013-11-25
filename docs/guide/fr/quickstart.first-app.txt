@@ -1,5 +1,5 @@
 Créer sa première application Yii
-================================
+=================================
 
 Pour se faire la main avec Yii, nous allons décrire dans cette section comment créer votre première application avec le framework Yii. Vous allez pour cela utiliser le puissant outil `yiic` qui peut automatiser la création du code pour certaines tâches. Par convention, nous supposons que `YiiRoot` est le répertoire où Yii est installé, et `WebRoot` est la racine Web du serveur.
 
@@ -19,7 +19,7 @@ Lancez `yiic` sur la ligne de commande comme suit :
 > ~~~
 
 Cette commande va créer un squelette d'application Yii sous le répertoire
-`WebRoot/testdrive`. L'application comporte une structure de répertoire nécessaire à la plupart des applications `Yii`
+`WebRoot/testdrive`. L'application comporte une structure de sous-répertoires nécessaires à la plupart des applications `Yii`
 
 Sans écrire une seule ligne de code, vous pouvez tester votre première application Yii, en accédant à l'url suivante dans le navigateur :
 
@@ -27,7 +27,7 @@ Sans écrire une seule ligne de code, vous pouvez tester votre première applica
 http://WebRoot/testdrive/index.php
 ~~~
 
-Comme vous pouvez le constater, l'application a trois pages: la page d'accueil,
+Comme vous pouvez le voir, l'application a trois pages: la page d'accueil,
 la page de contact et la page de login. La page d'accueil vous montre des informations sur l'application, ainsi que sur l'état de l'utilisateur connecté. La page de contact affiche un formulaire de contact que les utilisateurs peuvent remplir, et la page de login permet aux utilisateurs de s'authentifier avant d'accéder à un contenu privé.
 Les copies d'écran suivantes vous montrent plus de détails.
 
@@ -87,10 +87,11 @@ testdrive/
 Connexions aux bases de données
 -------------------------------
 
-La plupart des applications web sont gérées par une base de données.
-Notre application de test ne fait pas exception. Pour utiliser une base de
-données, nous devons auparavant signaler à l'application comment se connecter à la base de données. Pour cela, il faut modifier le fichier de configuration de l'application
-`WebRoot/testdrive/protected/config/main.php` comme ceci :
+La plupart des applications Web sont soutenues par une base de données.
+Notre application de test ne fait pas exception. Pour utiliser une base de 
+données, nous devons indiquer à l'application comment s'y connecter.
+Ceci se fait en modifiant le fichier de configuration de l'application
+`WebRoot/testdrive/protected/config/main.php` de cette façon:
 
 ~~~
 [php]
@@ -106,15 +107,22 @@ return array(
 );
 ~~~
 
-Dans cet exemple, nous ajoutons une entrée nommée `db` aux `components` (composants), qui indique à l'application de se connecter à la base de données SQLlite
+Dans cet exemple, nous ajoutons une entrée nommée `db` aux `components` (composants), 
+qui indique à l'application de se connecter à la base de données SQLlite
 `WebRoot/testdrive/protected/data/source.db` quand cela est nécessaire.
+Le code ci-dessus indique à Yii que l'application doit se connecter à la base de données 
+SQLite `WebRoot/testdrive/protected/data/testdrive.db` en cas de besoin. 
+Notez que la base de données SQLite est déjà incluse dans le squelette d'application que nous avons juste généré.
+
 
 > Note|Note : Pour utiliser les fonctionnalités de base de données de Yii, il
 > est nécessaire d'activer l'extension PDO dans PHP, ainsi que les différents drivers
 > PDO spécifiques à chaque base de données. Pour votre application de test, vous
 > avez besoin que les extensions `php_pdo` et `php_pdo_sqlite` soient activées.
 
-Pour finir, nous devons préparer une base de donnée SQLite. En utilisant les outils d'administration SQLite, vous pouvez créer une table dans la base de données avec le modèle suivant :
+Pour finir, nous devons préparer une base de donnée SQLite. 
+En utilisant les outils d'administration SQLite, vous pouvez créer une table 
+dans la base de données selon le modèle suivant:
 
 ~~~
 [sql]
@@ -129,7 +137,8 @@ CREATE TABLE User (
 > Note: Si vous utilisez MySQL, vous devez remplacer `AUTOINCREMENT`
 > par `AUTO_INCREMENT` dans le code SQL ci-dessus.
 
-Par souci de simplification, seule une table appelée `User` est créée dans la base. Le fichier de base de données SQLite est sauvé sous le nom
+Par souci de simplification, seule une table appelée `User` est créée dans la base. 
+Le fichier de base de données SQLite est sauvé sous le nom
 
 `WebRoot/testdrive/protected/data/source.db`. Notez que le nom de fichier ainsi
 que le répertoire qui le contient doivent être accessibles en écriture par l'utilisateur exécutant le serveur web.
@@ -138,9 +147,12 @@ que le répertoire qui le contient doivent être accessibles en écriture par l'
 Implémentations des opérations CRUD
 -----------------------------------
 
-Maintenant, la partie amusante! Vous allez implémenter les opérations CRUD sur la table `User` que vous venez de créer (CRUD signifie Create, Read, Update et Delete, i.e. Création, Lecture, Modification et Suppression). Les opérations CRUD sont le fondement de la manipulation des données et donc nécessaires la plupart du temps.
+Maintenant, la partie amusante! Vous allez implémenter les opérations CRUD sur la table `User` que vous venez de créer (CRUD signifie Create, Read, Update et Delete, i.e. Création, Lecture, Modification et Suppression).
+Les opérations CRUD sont les primitives de bases pour manipuler des données et sont donc nécessaires la plupart du temps.
 
-Plutôt que d'écrire du code qui implémente ces opérations CRUD, vous allez encore vous servir du puissant outil `yiic`, afin de générer automatiquement ce code. Ce processus est aussi connu sous le nom de *scaffolding* (échafaudage). Ouvrez une fenêtre de ligne de commande, et exécutez les commandes suivantes :
+Plutôt que d'écrire du code pour implémenter ces opérations CRUD typiques d'une application qui utilise une base de données,
+vous allez encore vous servir du puissant outil `yiic`, afin de générer automatiquement ce code. 
+Ce processus est connu sous le nom de *scaffolding* (échafaudage). Ouvrez une fenêtre de ligne de commande, et exécutez les commandes suivantes:
 
 ~~~
 % cd WebRoot/testdrive
